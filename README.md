@@ -8,7 +8,8 @@ The IR Decoding module is, to the best of my knowledge, a novel approach: it sho
 When you plug the Uno IR into your computer, a new drive will mount (like a USB flash drive) named "RPI-RP2".
 1. Copy the ```firmware.uf2``` file to this drive.  After the copy finishes (it will take a minute), the drive should automatically unmount, then a new drive will mount named "CIRCUITPY".
 2. Delete all the files on the CIRCUITPY drive.
-3. Copy all the files inside the "board" directory from this repository into the CIRCUITPY drive.  The file structure should now look like: ```CIRCUITPY/uno.py``` and ```CIRCUITPY/main.py```... etc.
+3. Copy all the files inside the "board" directory from this repository into the CIRCUITPY drive.  The file structure should now look like: ```CIRCUITPY/uno.py``` and ```CIRCUITPY/IRModule.py```... etc.
+4. Choose which example you want to work from - I've provided an example for the button only, the encoder, or the IR module that should all be fairly self-explanatory - you can build your own version, too.  Depending on which option you want, look in the "options" folder, pick a subfolder, and copy the contents to ```CIRCUITPY/``` - you should now have a ```CIRCUITPY/main.py``` plus, potentially, a couple other files (depending on the example).
 
 ## Modification
-```main.py``` contains the keymap (keyboard.keymap) and the IR Map (irHandler.map) (like a keymap, but maps IR codes to functions instead of button presses to functions), as well as the encoder map (encoder_handler.map) if you've soldered an encoder on.  For instructions on how to build macros, etc, I recommend taking a look at the [KMK Documentation](http://kmkfw.io).
+```main.py``` contains the keymap (keyboard.keymap) and the IR Map (irHandler.map) (like a keymap, but maps IR codes to functions instead of button presses to functions), as well as the encoder map (encoder_handler.map) if you've soldered an encoder on.  For instructions on how to build macros, etc, I recommend taking a look at the [KMK Documentation](http://kmkfw.io).  The different examples in "options" show how to use the different map options.

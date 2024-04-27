@@ -6,17 +6,13 @@ from kmk.kmktime import ticks_diff
 from kmk.handlers.sequences import send_string
 from kmk.keys import KC
 from kmk.types import KeySequenceMeta
-from math import log, ceil
 
-def log16(num):
-    return log(num)/log(16)
-
-def decode(values, boundarySize = 50):    
+def decode(values, boundarySize = 50):
     if (len(values) == 0):
         return None
     if (len(values) <= 3): # if there are only 3 values, it's probably a "repeat" command.
         return "repeat"
-    
+
     marks = []
     spaces = []
     for value in values[2:]:
@@ -24,10 +20,10 @@ def decode(values, boundarySize = 50):
             marks.append(value)
         else:
             spaces.append(-value)
-    
+
     marks.sort()
     spaces.sort()
-    
+
     markBoundaries = []
     spaceBoundaries = []
     if (len(marks) > 0):
@@ -38,11 +34,11 @@ def decode(values, boundarySize = 50):
         for pSpace, nSpace in zip(spaces[:-1], spaces[1:]):
             if ((nSpace - pSpace) > boundarySize):
                 spaceBoundaries.append(nSpace)
-    
+
     possibilities = (len(markBoundaries)+1)*(len(spaceBoundaries)+1)
     if (possibilities > 10): # > 16):
         return None # Give up.  This is too ugly a protocol.
-    
+
     if (len(values) & 0x1): # if we have an odd number of values,
         # we can IGNORE the last mark IF there are not multiple mark timings.
         # if there ARE multiple mark timings... we have to assume it matters
@@ -71,8 +67,7 @@ def decode(values, boundarySize = 50):
                 break
         encodedValues.append(str(mi*len(markBoundaries) + si))
 
-    outHexLen = ceil(len(valuePairs)*log16(possibilities))
-    outHex = ("0"*outHexLen + hex(int("".join(encodedValues), possibilities)).upper()[2:])[-outHexLen:]
+    outHex = hex(int("".join(encodedValues), possibilities)).upper()[2:]
     return outHex
 
 # Here I'm shimming the pulseio class with a couple changes:
@@ -189,9 +184,9 @@ class ir():
         if (newPress):
             self.currentValue = newVal
             self.events.append(("press", self.currentValue))
-        
+
         self.pulses = []
-    
+
     def readPulses(self, ticksNow: int):
         while (self._pulse):
             # if, at any point, the current values would "expire" (took longer than 200ms to receive)
@@ -218,7 +213,7 @@ class ir():
                 readPulse = self._pulse.popleft()
                 if (len(self.pulses)): # we only append if we've already started (and we only start at a "start") or else it'll be chaos.
                     self.pulses.append(readPulse[0] if readPulse[1] else -readPulse[0]) # write a + or - value to indicate mark or space.
-    
+
     def buttonTimeout(self, ticksNow: int):
         # After we've serviced all the pulses, we need to see if the button has been released.
         # I'm giving it 300ms, which should be adequate: if we haven't received a new signal within 300
@@ -240,7 +235,7 @@ class ir():
 
         newEvents = self.events
         self.events = []
-        return newEvents    
+        return newEvents
 
 
 class IR_Handler(Module):
@@ -272,8 +267,9 @@ class IR_Handler(Module):
                 mapKeys = self.map.keys()
                 if (key in mapKeys):
                     which = self.map[key]
-                elif ("new" in mapKeys):
+                elif ("new" in mapKeys) and (key != "repeat"):
                     which = self.map["new"]
+                if (which):
                     if (isinstance(key, str)):
                         seq = []
                         for char in key:
@@ -282,7 +278,6 @@ class IR_Handler(Module):
                                 kc = KC.LSHIFT(kc)
                             seq.append(kc)
                         self.newIRKey.meta = KeySequenceMeta(seq)
-                if (which):
                     layer_id = keyboard.active_layers[0]
                     if (ev == "release"):
                         keyboard.remove_key(which[layer_id])
