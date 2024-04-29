@@ -83,7 +83,7 @@ irHandler.map = { # Note that transparent keys don't work on the mapping here, e
                  "16B47": (G1, G1, G1, G1),
                  "66B47": (B2, B2, B2, B2),
                  "96B47": (Y3, Y3, Y3, Y3),
-                 "new": (KC.NO, KC.NO, KC.NO, SEND_IR_CODE), # When we get a new code, we DO want to print that out for programming (ONLY ON THE LAST LAYER) - comment this line if that's not true
+                 "new": (SEND_IR_CODE, SEND_IR_CODE, SEND_IR_CODE, SEND_IR_CODE), # Most people don't have a way to activate the other layers unless they happen to have the exact same remote, so... let's do this: it'll spit it out on every layer (used to only be the last one)
                  "B47": (KC.N1, send_string("I"), send_string("one"), SEND_IR_CODE),
                  "80B47": (KC.N2, send_string("II"), send_string("two"), SEND_IR_CODE),
                  "40B47": (KC.N3, send_string("III"), send_string("three"), SEND_IR_CODE),
